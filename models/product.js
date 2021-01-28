@@ -1,61 +1,102 @@
-const fs = require('fs');
-const path = require('path');
+const moongose = require('mongoose');
 
-const p = path.join(
-  path.dirname(process.mainModule.filename),
-  'data',
-  'products.json'
-);
+const Schema = moongose.Schema;
 
-const getProductsFromFile = cb => {
-  fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  });
-};
-
-module.exports = class Product {
-  constructor(id, title, imageUrl, description, price) {
-    this.id = id;
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
+const productSchema = new Schema ({
+  title : {
+    type: String,
+    require: true
+  },
+  imageUrl : {
+    type: String,
+    require: true
+  },
+  description : {
+    type: String,
+    require: true
+  },
+  price:  {
+    type: String,
+    require: true
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    require: true
   }
+});
 
-  save() {
-    
-    
-    getProductsFromFile(products => {
-      if (this.id) {
-        const exisProdIndex = products.findIndex(p => p.id === this.id);
-        const updateProd = [... products];
-        updateProd[exisProdIndex] = this;
-        fs.writeFile(p, JSON.stringify(updateProd), err => {
-          console.log(err);
-        });
-      } else {
-        this.id = Math.random().toString();
-        products.push(this);
-        fs.writeFile(p, JSON.stringify(productsx), err => {
-          console.log(err);
-        });
-      }
-      
-    });
-  }
+module.exports = moongose.model('Product',productSchema);
+// const MongoDb = require('mongodb');
 
-  static fetchAll(cb) {
-    getProductsFromFile(cb);
-  }
+// const getDB = require('../util/database').getDB;
 
-  static findById (id,cb) {
-    getProductsFromFile(products => {
-       const product = products.find(p => p.id === id);
-       cb(product);
-    });
-  }
-};
+// module.exports = class Product {
+//   constructor(title, imageUrl, description, price,id, userId) {
+//     this.title = title;
+//     this.imageUrl = imageUrl;
+//     this.description = description;
+//     this.price = price;
+//     this._id = id ? new MongoDb.ObjectID(id) : null;
+//     this.userId = userId;
+//   }
+
+//   save() {
+//     const db = getDB();
+//     let dbOp; 
+//     if (this._id) {
+//       dbOp = db.collection('products').updateOne({_id : this._id},{$set: this});
+//     } else {
+//       dbOp = db.collection('products').insertOne(this);
+//     }
+
+//     return dbOp
+//       .then( res => {
+//         console.log("SUCCESS");
+//       })
+//       .catch(err => {
+//         throw err;
+//       });
+//   }
+
+//   static deleteById(id) {
+//     const db = getDB();
+//     db.collection('products')
+//       .deleteOne({_id: new MongoDb.ObjectID(id)})
+//       .then(result => {
+//         console.log('Deleted');
+//       })
+//       .catch(err => {
+//         console.log(err);
+//       });
+//   }
+
+//   static fetchAll(/* cb */) {
+//     const db = getDB();
+//     return db
+//       .collection('products')
+//       .find()
+//       .toArray()
+//       .then(prod => {
+//         return prod;
+//       })
+//       .catch(err => {
+//         throw err;
+//       });
+//     /* getProductsFromFile(cb); */
+//   }
+
+//   static findById (id) {
+//     const db = getDB();
+//     return db
+//       .collection('products')
+//       .find({_id: new MongoDb.ObjectID(id)})
+//       .next()
+//       .then(prod => {
+//         return prod;
+//       })
+//       .catch(err => {
+//         throw err;
+//       });
+//   }
+// };
