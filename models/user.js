@@ -52,6 +52,20 @@ userSchema.methods.addToCart = function(product) {
   return this.save();
 };
 
+userSchema.methods.removeFromCart = function(productId) {
+  
+  this.cart.items = this.cart.items.filter( item => {
+    return item.productId.toString() !== productId.toString();
+  });
+
+  return this.save();
+}
+
+userSchema.methods.clearCart = function() {
+  this.cart = {items: []};
+  this.save();
+}
+
 module.exports = moongose.model('User',userSchema); 
 
 // const MongoDb = require('mongodb');

@@ -1,6 +1,5 @@
-const bodyParser = require('body-parser');
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+const Order = require('../models/orders');
 
 exports.getProducts = (req, res, next) => {
   Product.find()
@@ -46,7 +45,6 @@ exports.getCart = (req, res, next) => {
   .populate('cart.items.productId')
   .execPopulate()
   .then(cartProducts => {
-    console.log(cartProducts.cart.items);
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
@@ -60,7 +58,7 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req,res,next) => {
    const prodId = req.body.productId;
-   console.log(prodId);
+
    Product.findById(prodId)
     .then(prod => {
       req.user.addToCart(prod);
@@ -72,23 +70,46 @@ exports.postCart = (req,res,next) => {
 
 exports.postCartDeleteProduct = (req,res,next) => {
   const prodId = req.body.productId;
-  const price = Product.findById(prodId, prod => {
-    Cart.deleteProduct(prodId,prod.price);
+  req.user.removeFromCart(prodId)
+  .then(result => {
     res.redirect('/cart');
+  })
+  .catch(err => {
+    console.log(err);
   });
 };
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
+  .populate('cart.items.productId')
+  .execPopulate()
+  .then(user => {
+    const products = user.cart.items.map(i => {
+      return {product: {...i.productId._doc} , quantity: i.quantity};
+    })
+    const order = new Order({
+      user: {
+        name: req.user.name,
+        userId: req.user //Moongose select the ID
+      },
+      products: products,
+
+    });
+
+    return order.save();
+  })
+    .then(result => {
+      return req.user.clearCart();
+      
+    })
     .then(result => {
       res.redirect('/orders');
-    })
-    .catch(error => console.log(err));
+    })  
+    .catch(err => console.log(err));
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user.getOrders()
+  Order.find({'user.userId':req.user._id})
     .then(orders => {
         res.render('shop/orders', {
         path: '/orders',

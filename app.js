@@ -12,7 +12,6 @@ const User = require('./models/user');
 
 const cors = require('cors');
 
-
 const PORT = process.env.PORT || 5000;
 
 const app = express();
@@ -21,7 +20,6 @@ const corsOptions = {
     origin: "https://desolate-mountain-16221.herokuapp.com/",
     optionsSuccessStatus: 200
 };
-
 
 const options = {
     useUnifiedTopology: true,
@@ -50,14 +48,10 @@ app.use((req, res, next) => {
         });
 });
 
-
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 app.use(errorController.get404);
-
-
-
 
 mongoose
     .connect(MONGODB_URL,options)
@@ -74,7 +68,6 @@ mongoose
                 user.save();
             }
         });
-        
         app.listen(PORT);
     })
     .catch(err => console.log(err));
