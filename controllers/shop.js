@@ -30,6 +30,7 @@ exports.getProduct = (req, res, next) => {
 }
 
 exports.getIndex = (req, res, next) => {
+  console.log('Whts up');
   Product.find()
   .then(products => {
     res.render('shop/index', {
@@ -41,6 +42,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
+  
   req.user
   .populate('cart.items.productId')
   .execPopulate()
@@ -90,6 +92,7 @@ exports.postOrder = (req, res, next) => {
     const order = new Order({
       user: {
         name: req.user.name,
+        email: req.user.email,
         userId: req.user //Moongose select the ID
       },
       products: products,
@@ -109,12 +112,13 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
+  console.log(req.user);
   Order.find({'user.userId':req.user._id})
     .then(orders => {
         res.render('shop/orders', {
         path: '/orders',
         pageTitle: 'Your Orders',
-        orders
+        orders: orders
       });
     })
     .catch(err => console.log(err));
