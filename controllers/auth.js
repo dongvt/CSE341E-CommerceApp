@@ -68,7 +68,12 @@ exports.postSignup = (req, res, next) => {
     const pass = req.body.password;
     const name = req.body.name;
     const conPass = req.body.confirmPassword;
-    console.log(email);
+
+    if (pass !== conPass) {
+        req.flash('error','The password and confirmation password are different');
+        return res.redirect('/signup');
+    }
+    
     User.findOne({email: email})
     .then(userInf => {
         if (userInf) {
