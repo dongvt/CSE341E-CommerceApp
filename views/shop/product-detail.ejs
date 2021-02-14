@@ -1,18 +1,35 @@
 <%- include('../includes/head.ejs') %>
-    </head>
-
     <body>
         <%- include('../includes/navigation.ejs') %>
         <main class="centered">
-            <h1><%=product.title%></h1>
-            <hr>
-            <div>
-                <img src="<%= product.imageUrl %>"  alt="<%= product.title %>">
+            <div class="container">
+                <div class="w-50 mx-auto card bg-light border-secondary my-2">
+                    <div class="card-header">
+                        <h2><%= product.title %></h2>
+                    </div>
+                    <img class="card-img" src="<%= product.imageUrl %>" alt="<%= product.title %>">
+                    
+                    <div class="card-body">
+                        <h2 class="text-center">$<%= product.price %></h2>
+                        <p ><%= product.description %></p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class= "col-sm text-center">
+                                    <a href="/products/<%= product._id %>" class="btn btn-primary">Details</a>
+                                </div>
+                                <div class= "col-sm text-center">
+                                    <%if (isAuth) {%>
+                                        <%- include('../includes/add-to-cart.ejs',{product:product}) %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
             </div>
-            <h2><%= product.price %></h2>
-            <p><%= product.description %></p>
-            <%if (isAuth) {%>
-            <%- include('../includes/add-to-cart.ejs') %>
-            <% } %>
         </main>
         <%- include('../includes/end.ejs') %>

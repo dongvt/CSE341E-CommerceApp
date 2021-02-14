@@ -1,73 +1,57 @@
-<div class="backdrop"></div>
-<header class="main-header">
-    <button id="side-menu-toggle">Menu</button>
-    <nav class="main-header__nav">
-        <ul class="main-header__item-list">
-            <li class="main-header__item">
-                <a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop</a>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <div class="container-fluid">
+        <%if (isAuth) {%>
+          <a class="navbar-brand" href="/"><%= usName%></a>
+        <% } else {%>
+          <a class="navbar-brand" href="/">Ecommerce App</a>
+        <% } %>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link <%= path === '/' ? 'active' : '' %>" aria-current="page" href="/">Home</a>
             </li>
-            <li class="main-header__item">
-                <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
+            <li class="nav-item">
+              <a class="nav-link <%= path === '/products' ? 'active' : '' %>" aria-current="page"
+                href="/products">Products</a>
             </li>
             <%if (isAuth) {%>
-                <li class="main-header__item">
-                    <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
-                </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
-                </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add
-                        Product
-                    </a>
-                </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
-                    </a>
-                </li>
-            <% } %>
-        </ul>
-        <ul class="main-header__item-list">
-            <%if (!isAuth) {%>
-                <li class="main-header__item">
-                    <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
-                </li>
-                <li class="main-header__item">
-                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
-                </li>
-            <% } else {%>
-                <li class="main-header__item">
-                    <form action="/logout" method="POST">
-                        <input type="hidden" value="<%= token %>" name="_csrf">
-                        <button type="submit">Logout</button>
-                    </form>
-                </li>
-            <% } %>
-        </ul>
+              <li class="nav-item">
+                <a class="nav-link <%= path === '/cart' ? 'active' : '' %>" aria-current="page"
+                  href="/cart">Cart</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%= path === '/orders' ? 'active' : '' %>" aria-current="page"
+                  href="/orders">Orders</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%= path === '/admin/add-product' ? 'active' : '' %>" aria-current="page"
+                  href="/admin/add-product">Add Product</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%= path === '/admin/products' ? 'active' : '' %>" aria-current="page"
+                  href="/admin/products">Admin Products</a>
+              </li>
+              <% } %>
+          </ul>
+          <%if (!isAuth) {%>
+            <li class="d-flex">
+              <a class="btn btn-outline-success <%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
+            </li>
+            <li class="d-flex">
+              <a class="btn btn-outline-success <%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+            </li>
+          <% } else {%>
+            <form class="d-flex" action="/logout" method="POST">
+              <input type="hidden" value="<%= token %>" name="_csrf">
+              <button class="btn btn-outline-success" type="submit">Logout</button>
+            </form>
+          <% } %>
+        </div>
+      </div>
     </nav>
-</header>
-
-<nav class="mobile-nav">
-    <ul class="mobile-nav__item-list">
-        <li class="mobile-nav__item">
-            <a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop</a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= path === '/products' ? 'active' : '' %>" href="/products">Products</a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= path === '/orders' ? 'active' : '' %>" href="/orders">Orders</a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= path === '/admin/add-product' ? 'active' : '' %>" href="/admin/add-product">Add Product
-            </a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
-            </a>
-        </li>
-    </ul>
-</nav>
+  </header>

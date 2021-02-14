@@ -1,24 +1,76 @@
 <%- include('../includes/head.ejs') %>
-    </head>
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <main>
-            <% if (orders.length <= 0 ) { %>
-                <h1>Nothing there!</h1>
-            <%} else {%>
-                <ul>
-                    <% orders.forEach(order => {%>
-                        <li>
-                            <h1>Order - # <%= order._id %></h1>
-                            <ul>
-                                <% order.products.forEach( item => {%>
-                                    <li><%= item.product.title %> (<%= item.quantity %>)</li>
+            <main>
+                <div class="container">
+                    <% if (orders.length <=0 ) { %>
+                        <div class="mt-4 mx-auto w-50 alert alert-primary text-center" role="alert">
+                            <h1>You don't have orders yet</h1>
+                            <p>Go and make one!</p>
+                            <a href="/products" class="btn btn-primary">Go to Gallery</a>
+                        </div>
+                        
+                    <%} else {%>
+                        <div class="accordion w-75 mt-3 mx-auto">
+
+                            <% orders.forEach(order=> {%>
+                                <div class="card">
+                                    <div class="card-header" id="h<%=order._id%>">
+                                        <button class="float-left btn btn-link" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#c<%=order._id%>" aria-expanded="false">Order: <%= order._id %></button>
+                                        <% 
+                                        //Convert the date
+                                        const date = new Date(order.date);
+                                        const dateString = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+                                        %>
+                                        - <%= dateString %>
+                                        
+                                    </div>
+                                    <div id="c<%=order._id%>" class="collapse">
+                                        
+                                        <div class="card-body">
+                                            <table class="table">
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Title</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                </tr>
+                                                <% order.products.forEach( item=> {%>
+                                                    <tr>
+                                                        <td scope="row">
+                                                            <img 
+                                                                class="rounded float-left" 
+                                                                src="<%= item.product.imageUrl%>" 
+                                                                alt="<%= item.product.title%>"
+                                                                height="75"
+                                                                width="75">
+                                                        </td>
+                                                        <td>
+                                                            <%= item.product.title %>
+                                                        </td>
+                                                        <td>
+                                                            <%= item.quantity %>
+                                                        </td>
+                                                        <td>
+                                                            $<%= item.quantity * parseFloat(item.product.price)%>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <th>Total:</th>
+                                                    <td>$<%=order.totalPrice%></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                                 <% }); %>
-                            </ul>
-                        </li>
-                    <% }); %>
-                </ul>
-            <% } %>
-        </main>
-        <%- include('../includes/end.ejs') %>
+                        </div>
+                        <% } %>
+                </div>
+            </main>
+            <%- include('../includes/end.ejs') %>

@@ -59,10 +59,11 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req,res,next) => {
    const prodId = req.body.productId;
+   const qty    = parseInt(req.body.quantity);
 
    Product.findById(prodId)
     .then(prod => {
-      req.user.addToCart(prod);
+      req.user.addToCart(prod,qty);
       res.redirect('/cart'); 
     }).then( result => {
       console.log(result);
@@ -87,15 +88,19 @@ exports.postOrder = (req, res, next) => {
   .then(user => {
     const products = user.cart.items.map(i => {
       return {product: {...i.productId._doc} , quantity: i.quantity};
-    })
+    });
+    
+    const grandTotal = products.reduce((total,p) => total + (parseFloat(p.product.price) * p.quantity),0);
+    
     const order = new Order({
       user: {
         name: req.user.name,
         email: req.user.email,
         userId: req.user //Moongose select the ID
       },
+      date: new Date(),
       products: products,
-
+      totalPrice: grandTotal
     });
 
     return order.save();
@@ -111,7 +116,7 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  console.log(req.user);
+  
   Order.find({'user.userId':req.user._id})
     .then(orders => {
         res.render('shop/orders', {

@@ -23,6 +23,14 @@ const orderSchema = new Schema({
             red: 'User',
             required: true
         }
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    totalPrice: {
+        type: Number,
+        required: true
     }
 });
 

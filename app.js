@@ -17,10 +17,10 @@ const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const csurf = require('csurf');
 const flash = require('connect-flash');
-
+const dotenv = require('dotenv').config();
 
 //Constant variables
-const MONGODB_URL = process.env.MONGODB_URL || 'mongodb+srv://gvt:Mariana1@cluster0.h4mw8.mongodb.net/shop?retryWrites=true&w=majority';
+const MONGODB_URL = process.env.MONGODB_URL || process.env.MONGODB_LOCAL;
 const PORT = process.env.PORT || 5000;
 const csrfProtection = csurf();
 
@@ -33,7 +33,7 @@ const store = new MongoDbStore({
 });
 
 const corsOptions = {
-    origin: "https://desolate-mountain-16221.herokuapp.com/",
+    origin: process.env.HEROKU_APP_URL,
     optionsSuccessStatus: 200
 };
 
@@ -74,14 +74,33 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
     res.locals.isAuth = req.session.isAuth;
     res.locals.token = req.csrfToken();
+    res.locals.usName = req.session.isAuth ? req.user.name : '';
     next();
 });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
-
+app.get('/desTest',(req,res,next) => {
+    console.log('at least it is recognizinf the route');
+    try {
+        res.render('test/index', {
+        prods: '',
+        pageTitle: '',
+        path: ''
+    });
+    } catch (err) {
+        console.log(err);
+    }
+    
+}); 
+app.get('/500',errorController.get500);
 app.use(errorController.get404);
+
+
+app.use((error,req,res,next) => {
+    res.redirect('/500');
+});
 
 mongoose
     .connect(MONGODB_URL, options)
